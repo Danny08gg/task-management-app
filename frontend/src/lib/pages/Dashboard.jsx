@@ -8,7 +8,6 @@ function Dashboard() {
   const [stats, setStats] = useState({ todo: 0, inProgress: 0, done: 0 });
   const navigate = useNavigate();
 
-  // Fetch initial stats from PocketBase with error handling
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -29,11 +28,8 @@ function Dashboard() {
         setStats(newStats);
         console.log('Updated stats:', newStats);
       } catch (error) {
-        console.error('Failed to fetch stats:', error.message);
-        if (error.status === 0) {
-          console.error('Possible cause: PocketBase server not running or unreachable');
-        }
-        setStats({ todo: 0, inProgress: 0, done: 0 }); // Default if fetch fails
+        console.error('Full error:', error);
+        setStats({ todo: 0, inProgress: 0, done: 0 });
       }
     };
     fetchStats();
@@ -65,7 +61,6 @@ function Dashboard() {
       return;
     }
     try {
-      // Test connection before proceeding
       const response = await fetch('http://127.0.0.1:8090/api/health');
       if (!response.ok) throw new Error('PocketBase server not reachable');
 
@@ -76,35 +71,35 @@ function Dashboard() {
 
       for (let i = 0; i < stats.todo; i++) {
         await pb.collection('task').create({
-          title: `Task ${i + 1} (To-Do)`,
+          name: `Task ${i + 1} (To-Do)`, // Ganti title dengan name
           user_id: pb.authStore.model.id,
           status: 'to-do',
           priority: 'low',
           category: 'Work',
-          description: 'Task description', // Tambah jika wajib
-          due_date: new Date().toISOString().split('T')[0], // Tambah jika wajib
+          description: 'Task description',
+          due_date: new Date().toISOString().split('T')[0],
         });
       }
       for (let i = 0; i < stats.inProgress; i++) {
         await pb.collection('task').create({
-          title: `Task ${i + 1} (In-Progress)`,
+          name: `Task ${i + 1} (In-Progress)`, // Ganti title dengan name
           user_id: pb.authStore.model.id,
           status: 'in-progress',
           priority: 'low',
           category: 'Work',
-          description: 'Task description', // Tambah jika wajib
-          due_date: new Date().toISOString().split('T')[0], // Tambah jika wajib
+          description: 'Task description',
+          due_date: new Date().toISOString().split('T')[0],
         });
       }
       for (let i = 0; i < stats.done; i++) {
         await pb.collection('task').create({
-          title: `Task ${i + 1} (Done)`,
+          name: `Task ${i + 1} (Done)`, // Ganti title dengan name
           user_id: pb.authStore.model.id,
           status: 'done',
           priority: 'low',
           category: 'Work',
-          description: 'Task description', // Tambah jika wajib
-          due_date: new Date().toISOString().split('T')[0], // Tambah jika wajib
+          description: 'Task description',
+          due_date: new Date().toISOString().split('T')[0],
         });
       }
       alert('Tasks updated successfully!');
